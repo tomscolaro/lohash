@@ -121,11 +121,8 @@ class StringLoHash(object):
                 print("Generating direct to CSV...")
                 for i in self.rows:
                     if self.rows_used[i]:
-                        print("supposed to pass")
                         continue
-                    
-
-                    print(self.rows_used)
+        
                     search = self.shingle(self.rows[i][0][0], self.k)
                     res = self.query(search, self.threshold)
                 
@@ -143,7 +140,7 @@ class StringLoHash(object):
     
     def writeGroups(self):
         today = date.today()
-        with open(self.output_path, 'w', newline='') as file:
+        with open(self.output_path, 'w', newline='',  encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
             idx = 0 
@@ -162,7 +159,7 @@ class StringLoHash(object):
         groupId = self.global_group_id    
         groupName = 'Group {}'.format(groupId)
 
-        with open(self.output_path, 'a', newline='') as file:
+        with open(self.output_path, 'a', newline='',  encoding='utf-8') as file:
             writer = csv.writer(file)
             for i in results:
                 writer.writerow([self.rows[i[0]][0][0], self.rows[i[0]][0][1], int(i[0][1]), i[1], groupName, groupId, today]) #headers
@@ -174,7 +171,7 @@ class StringLoHash(object):
     
 
     def genFile(self):
-        with open(self.output_path, 'w', newline='') as file:
+        with open(self.output_path, 'w', newline='',  encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
         file.close()
