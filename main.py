@@ -17,6 +17,8 @@ if __name__ == '__main__':
     parser.add_argument("--output", help="CSV File to output if needed.")
     parser.add_argument("--threshold", help="Threshold for comparison between groups 0<threshold<1")
     parser.add_argument("--k", help="Threshold for comparison between groups 0<k<4")
+    parser.add_argument("--writetype", default="default", help="A selection for how the output is generated")
+    parser.add_argument("--verbose", default=False , help="Print steps during generation")
     args=parser.parse_args()
 
     os.environ['PYTHONHASHSEED'] = '1234'
@@ -39,10 +41,10 @@ if __name__ == '__main__':
 
         case _:
             print("Running Prod Workload...")
-            lsh = StringLoHash(args.input, args.output, saveHash=True,  threshold=float(args.threshold), k=int(args.k))
+            lsh = StringLoHash(args.input, args.output, saveHash=True,  threshold=float(args.threshold), k=int(args.k), writeType= args.writetype, verbose=args.verbose)
             lsh.start()
             # lsh.display()
-            if args.output:
+            if args.output and (args.writetype != "csv"):
                 print("Writing Output...")
                 lsh.writeGroups()
 

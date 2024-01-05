@@ -14,14 +14,13 @@ if not os.environ.get('PYTHONHASHSEED'):
 hashseed = os.getenv('PYTHONHASHSEED')
 
 class StringLoHash(object):
-    def __init__(self, data_path, output_path, threshold=.2, k=3, num_hashes=10, num_buckets=10, saveHash=True, seed=42, writeType="csv"):
+    def __init__(self, data_path, output_path, verbose=False, threshold=.2, k=3, num_hashes=10, num_buckets=10, saveHash=True, seed=42, writeType="default", global_group_id_start=0):
         if saveHash:
             print("With the Save Hash Option, you need to create a seed.. Your seed is currently {}...".format(seed))
             np.random.seed(seed)
 
-        self.write_type = 'default'
-        if not output_path:
-            self.write_type = writeType
+  
+        self.write_type = writeType
 
         self.k = k
         self.threshold = threshold
@@ -34,7 +33,10 @@ class StringLoHash(object):
         self.input = data_path
         self.output_path = output_path
         self.rows  = defaultdict(list)
+        self.rows_used  = defaultdict(bool)
         self.vocab = {}
+        self.verbose  = verbose
+        self.global_group_id = global_group_id_start
     
     
     def _create_hash_function(self):
@@ -104,6 +106,7 @@ class StringLoHash(object):
             for lines in csvFile:
                 if i >0:
                     self.rows[(lines[id_col], lines[id_col+1])].append([lines[data_col], lines[data_col +1]])
+                    self.rows_used[(lines[id_col], lines[id_col+1])] = False
                     data = self._add_vocab(lines[data_col], self.k)
                     self.index((lines[id_col], lines[id_col+1]), data)
                 i += 1
@@ -112,8 +115,25 @@ class StringLoHash(object):
     def generateGroups(self):
     
         match self.write_type:
+            
             case "csv":
-                print("Generating to CSV is not currently supported...")
+                self.genFile()
+                print("Generating direct to CSV...")
+                for i in self.rows:
+                    if self.rows_used[i]:
+                        print("supposed to pass")
+                        continue
+                    
+
+                    print(self.rows_used)
+                    search = self.shingle(self.rows[i][0][0], self.k)
+                    res = self.query(search, self.threshold)
+                
+
+                    if self.verbose:
+                        print("test", self.rows[i],  "\nout", len(res), "\n\n")
+                    self.diskWrite(self.rows[i], i, results=res)
+
             case _: 
                 print("Generating in Default Mode...")
                 for i in self.rows:
@@ -130,11 +150,35 @@ class StringLoHash(object):
             for i in self.rows:
                 groupName = "Group {}".format(idx)
                 for j in self.rows[i][1]:
-                    print(self.rows,"\n")
+                    if self.verbose:
+                        print(self.rows,"\n")
                     writer.writerow([self.rows[j[0]][0][0], self.rows[j[0]][0][1], int(j[0][1]), j[1],  groupName, idx, today])
                 idx+=1
-
         return
+    
+    def diskWrite(self, input_rows, id,  results):
+        today = date.today()
+
+        groupId = self.global_group_id    
+        groupName = 'Group {}'.format(groupId)
+
+        with open(self.output_path, 'a', newline='') as file:
+            writer = csv.writer(file)
+            for i in results:
+                writer.writerow([self.rows[i[0]][0][0], self.rows[i[0]][0][1], int(i[0][1]), i[1], groupName, groupId, today]) #headers
+                self.rows_used[i[0]] = True
+
+        file.close()
+        self.global_group_id +=1
+        return
+    
+
+    def genFile(self):
+        with open(self.output_path, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
+        file.close()
+
 
     
     def display(self):
