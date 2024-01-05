@@ -100,7 +100,7 @@ class StringLoHash(object):
     
 
     def readData(self, path, id_col=0, data_col=2):
-        with open(path, mode ='r') as file:
+        with open(path, mode ='r', encoding='utf-8') as file:
             csvFile = csv.reader(file)
             i = 0 
             for lines in csvFile:
@@ -179,8 +179,6 @@ class StringLoHash(object):
             writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
         file.close()
 
-
-    
     def display(self):
         print("Displaying Results... {} rows are available".format(len(self.rows)))
         printlist = list(self.rows)[:10]
