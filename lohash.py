@@ -40,8 +40,8 @@ class StringLoHash(object):
     
     
     def _create_hash_function(self):
-        a = np.random.randint(1, 20,000)
-        b = np.random.randint(1, 20,000)
+        a = np.random.randint(1, 500)
+        b = np.random.randint(1, 500)
         return lambda x: hash(str(a * hash(x) + b)) % self.num_buckets
 
     def _minhash(self, data):
@@ -158,6 +158,7 @@ class StringLoHash(object):
 
         groupId = self.global_group_id    
         groupName = 'Group {}'.format(groupId)
+        self.global_group_id +=1
 
         with open(self.output_path, 'a', newline='',  encoding='utf-8') as file:
             writer = csv.writer(file)
@@ -166,7 +167,7 @@ class StringLoHash(object):
                 self.rows_used[i[0]] = True
 
         file.close()
-        self.global_group_id +=1
+      
         return
     
 
