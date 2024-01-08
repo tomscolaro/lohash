@@ -125,11 +125,12 @@ class StringLoHash(object):
         
                     search = self.shingle(self.rows[i][0][0], self.k)
                     res = self.query(search, self.threshold)
-                
+                   
 
                     if self.verbose:
                         print("test", self.rows[i],  "\nout", len(res), "\n\n")
                     self.diskWrite(self.rows[i], i, results=res)
+                    self.global_group_id += 1
 
             case _: 
                 print("Generating in Default Mode...")
@@ -139,31 +140,28 @@ class StringLoHash(object):
         return
     
     def writeGroups(self):
-        today = date.today()
-        with open(self.output_path, 'w', newline='',  encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
-            idx = 0 
-            for i in self.rows:
-                groupName = "Group {}".format(idx)
-                for j in self.rows[i][1]:
-                    if self.verbose:
-                        print(self.rows,"\n")
-                    writer.writerow([self.rows[j[0]][0][0], self.rows[j[0]][0][1], int(j[0][1]), j[1],  groupName, idx, today])
-                idx+=1
+        # today = date.today()
+        # with open(self.output_path, 'w', newline='',  encoding='utf-8') as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow(["Data", "Data Name", "ID", "Measurement", "Group Name", "Group Generated ID", "Date Generated"]) #headers
+        #     idx = 0 
+        #     for i in self.rows:
+        #         groupName = "Group {}".format(idx)
+        #         for j in self.rows[i][1]:
+        #             if self.verbose:
+        #                 print(self.rows,"\n")
+        #             writer.writerow([self.rows[j[0]][0][0], self.rows[j[0]][0][1], int(j[0][1]), j[1],  groupName, idx, today])
+        #         idx+=1
         return
     
     def diskWrite(self, input_rows, id,  results):
         today = date.today()
 
-        groupId = self.global_group_id    
-        groupName = 'Group {}'.format(groupId)
-        self.global_group_id +=1
 
         with open(self.output_path, 'a', newline='',  encoding='utf-8') as file:
             writer = csv.writer(file)
             for i in results:
-                writer.writerow([self.rows[i[0]][0][0], self.rows[i[0]][0][1], int(i[0][1]), i[1], groupName, groupId, today]) #headers
+                writer.writerow([self.rows[i[0]][0][0], self.rows[i[0]][0][1], int(i[0][1]), i[1], 'Group {}'.format(self.global_group_id), self.global_group_id , today]) #headers
                 self.rows_used[i[0]] = True
 
         file.close()
