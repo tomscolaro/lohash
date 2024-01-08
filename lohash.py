@@ -40,8 +40,8 @@ class StringLoHash(object):
     
     
     def _create_hash_function(self):
-        a = np.random.randint(1, 5000)
-        b = np.random.randint(1, 5000)
+        a = np.random.randint(1, 20,000)
+        b = np.random.randint(1, 20,000)
         return lambda x: hash(str(a * hash(x) + b)) % self.num_buckets
 
     def _minhash(self, data):
