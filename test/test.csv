@@ -1,4 +1,4 @@
-﻿IDX,ID,STRING,Name
+idx,id,str,name
 0,5,Google,GoogleA
 1,10,Moogle,MoogleA
 2,12,Microsoft,MicrosoftA
@@ -9,3 +9,4 @@
 7,3,Doogley,DoogleyA
 8,87,Github,GithubA
 9,56,Reddit,RedditA
+10,5,Google,GoogleA
