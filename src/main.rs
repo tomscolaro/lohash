@@ -26,7 +26,7 @@ struct Args {
     output_file: String,
 
     /// num of hashes
-    #[arg(short, long, default_value_t = 60)]
+    #[arg(long, default_value_t = 60)]
     hash_num: u8,
 
     /// num of modulo buckets
@@ -59,8 +59,8 @@ fn main() {
     
     
     let mut rdr = csv::Reader::from_reader(input_file.unwrap());
-    let mut search_tree = Tree::new(hash_num, bucket_num, 
-                                upper_thres, lower_thres );
+    let mut search_tree = Box::new(Tree::new(hash_num, bucket_num, 
+                                upper_thres, lower_thres ));
     let mut iter = 0;
     let mut prev = Utc::now().time();
 
@@ -70,7 +70,7 @@ fn main() {
     for result in rdr.deserialize() {
         let record: Record = result.unwrap();
         let toks = hash::shingle_string(record.str.clone(), 2);
-        let row = TreeNode{
+        let row = Box::new(TreeNode{
                                     id: record.id,
                                     idx: record.idx,
                                     data: record.str,
@@ -80,14 +80,14 @@ fn main() {
                                     is_parent:false,
                                     left_hash_node: None,
                                     right_hash_node: None
-                                    };
+                                    });
         if (iter % 500) == 0{
             let curr = Utc::now().time();
            
             println!("Iteration: {:} - {:#?}", iter, (curr - prev).num_seconds() );
             prev = curr
         }       
-        search_tree.place_node(Box::new(row));
+        search_tree.place_node(row);
 
         iter += 1;
     }
