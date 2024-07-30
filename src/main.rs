@@ -113,7 +113,11 @@ fn main() {
     let mut node_vec : Vec<Vec<VecNode>> = vec![];
     println!("Reading and Sorting Tree...");
     for result in rdr.deserialize() {
-        let record: Record = result.unwrap();
+        let record: Record =  match result {
+            Ok(Some(result)) => result,
+            Ok(None) => panic!("A record Failed to read at {:?}", iter),
+            Err(_) => panic!("A record Failed to read at {:?}", iter)
+        };
         
         let toks = hash::shingle_string(record.str.clone(), 2);
         // let toks_copy = hash::shingle_string(record.str.clone(), 2);
