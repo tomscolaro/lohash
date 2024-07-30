@@ -68,9 +68,9 @@ impl VecTree {
             if comp >= self.lower_threshold  {
                 //check against ny of the current vec 
 
-                for (i, _second_vec) in v.iter().enumerate(){
+                for (j, _second_vec) in v.iter().enumerate(){
 
-                    let second_search =  compare_hash(v[i].get_hash(), input.get_hash(), self.num_hashes);
+                    let second_search =  compare_hash(v[j].get_hash(), input.get_hash(), self.num_hashes);
 
                     if second_search >= self.upper_threshold {
                         return (Some(i), comp)
