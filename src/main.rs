@@ -39,7 +39,7 @@ struct Args {
     bucket_num: u8,
 
     /// upper threshold percentage
-    #[arg(short, long, default_value_t = 0.5)]
+    #[arg(short, long, default_value_t = 0.7)]
     upper_threshold: f32,
 
     /// lower threshold percentage
@@ -135,7 +135,7 @@ fn main() {
 
         match search_tree.place_node(&mut row, &mut node_vec) 
         {
-            (-1.0, 1.0) => {
+            (None, 1.0) => {
                     row.hash_comp_value = Some(1.0);
                     node_vec.push(vec![row])
             
@@ -143,7 +143,7 @@ fn main() {
             },
             (i, val) => {
                     row.hash_comp_value = Some(val);
-                    node_vec[ i as usize ].push(row)
+                    node_vec[i.unwrap() ].push(row)
             }
 
         };

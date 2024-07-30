@@ -53,7 +53,7 @@ impl VecTree {
 
     }
 
-    pub fn place_node(&mut self,  input: &mut VecNode, vector: &mut Vec<Vec<VecNode>>) -> (f32, f32) {
+    pub fn place_node(&mut self,  input: &mut VecNode, vector: &mut Vec<Vec<VecNode>>) -> (Option<usize>, f32) {
     
         for (i, v) in vector.iter().enumerate(){
 
@@ -61,7 +61,7 @@ impl VecTree {
 
             if comp >= self.upper_threshold {
                 //add input to current vec
-                return (i as f32, comp); 
+                return (Some(i), comp); 
 
             } 
             
@@ -73,7 +73,7 @@ impl VecTree {
                     let second_search =  compare_hash(v[i].get_hash(), input.get_hash(), self.num_hashes);
 
                     if second_search >= self.upper_threshold {
-                        return (i as f32, comp)
+                        return (Some(i), comp)
                     }
 
                 }    
@@ -82,7 +82,7 @@ impl VecTree {
       
         }
 
-        (-1.0, 1.0)
+        (None, 1.0)
     }
 
     pub fn process_output(&self, input_vecs: &mut Vec<Vec<VecNode>>) -> Vec<VecOutputStore> { 
