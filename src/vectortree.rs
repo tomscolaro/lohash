@@ -42,11 +42,9 @@ impl VecTree {
             let random_noise_add: Vec<u64> = (0..num_hashes).map(|_| rng.gen_range(0..100)).collect();  
         
             VecTree{
-  
                 upper_threshold,
                 lower_threshold,
                 num_hashes,
-  
                 random_noise_multi,
                 random_noise_add,
             }
@@ -56,28 +54,20 @@ impl VecTree {
     pub fn place_node(&mut self,  input: &mut VecNode, vector: &mut Vec<Vec<VecNode>>) -> (Option<usize>, f32) {
     
         for (i, v) in vector.iter().enumerate(){
-
             let comp =  compare_hash(v[0].get_hash(), input.get_hash(), self.num_hashes);
 
             if comp >= self.upper_threshold {
-                //add input to current vec
                 return (Some(i), comp); 
-
             } 
             
-            if comp >= self.lower_threshold  {
-                //check against ny of the current vec 
-
+            if comp >= self.lower_threshold  { 
                 for (j, _second_vec) in v.iter().enumerate(){
-
                     let second_search =  compare_hash(v[j].get_hash(), input.get_hash(), self.num_hashes);
 
                     if second_search >= self.upper_threshold {
-                        return (Some(i), comp)
+                        return (Some(i), second_search)
                     }
-
                 }    
-
             }
       
         }
@@ -88,18 +78,14 @@ impl VecTree {
     pub fn process_output(&self, input_vecs: &mut Vec<Vec<VecNode>>) -> Vec<VecOutputStore> { 
         let mut results:Vec<VecOutputStore> = vec![];
         
-
         for (i, v) in input_vecs.iter().enumerate() {
             for (j, _second_vec) in v.iter().enumerate(){
                 let res = input_vecs[i][j].get_data(i as i32);
                 results.push(res)
-           
             }    
-
         }
       
         results
-       
     }
 
 
@@ -118,12 +104,8 @@ impl VecNode {
          }
     }
 
-
     pub fn get_hash(&self) -> Vec<f32> {
         self.hash.clone()
     }
-
-
-
-
+    
 }
